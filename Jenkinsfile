@@ -33,5 +33,13 @@ pipeline {
                 sh 'docker build --tag python-jenkins .'
             }
         }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker login -u stacktalks - S@igon12!@'
+                sh 'docker tag python-jenkins:latest stacktalks/python-jenkins:latest'
+                sh 'docker push stacktalks/python-jenkins:latest'
+            }
+        }
     }
 }
