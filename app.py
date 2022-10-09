@@ -10,3 +10,6 @@ def func01():
 
 def func02():
     return "Hello Hudson!"
+
+def func03():
+    return "Hello Jenkins, Where is Hudson!"
