@@ -30,7 +30,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                sh 'docker3 build --tag python-jenkins .'
+                sh 'docker build --tag python-jenkins .'
             }
         }
     }
