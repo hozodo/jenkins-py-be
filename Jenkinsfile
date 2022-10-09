@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    // agent any
+
+    docker {
+        image 'python:3'
+        label 'my-build-agent'
+      }
 
     stages {
          stage('Checkout') {
@@ -9,22 +14,22 @@ pipeline {
         }
          stage('Install') {
             steps {
-                bat 'python -m pip install -r requirements.txt'
+                sh 'pip3 install -r requirements.txt'
             }
         }
          stage('Test') {
             steps {
-                bat 'python -m pytest'
+                sh 'python -m pytest'
             }
         }
         stage('Build') {
             steps {
-                bat 'python app.py'
+                sh 'python app.py'
             }
         }
         stage('Build Docker Image') {
             steps {
-                bat 'docker build --tag python-jenkins .'
+                sh 'docker build --tag python-jenkins .'
             }
         }
     }
