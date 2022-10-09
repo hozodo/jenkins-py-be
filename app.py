@@ -13,3 +13,5 @@ def func02():
 
 def func03():
     return "Hello Jenkins, Where is Hudson!, I think he is gone"
+
+print(func02())
