@@ -4,6 +4,12 @@ pipeline {
         dockerhub = credentials('dockerhub')
     }
     stages {
+        stage('Init') {
+            steps {
+                echo 'Initializing..'
+                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+            }
+        }
         stage('Checkout') {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [],
@@ -33,7 +39,6 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                // sh 'echo $dockerhub_PSW | docker login -u dockerhub_USR -p S@igon12!@'
                 sh 'echo $dockerhub_PSW | docker login -u $dockerhub_USR --password-stdin'
                 sh 'docker tag python-jenkins:latest stacktalks/python-jenkins:latest'
                 sh 'docker push stacktalks/python-jenkins:latest'
