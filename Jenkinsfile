@@ -1,16 +1,13 @@
 pipeline {
     agent any
-    // agent {
-    //     docker {
-    //         image 'python:3'
-    //         label 'my-build-agent'
-    //     }
-    // }
-
+    environment {
+        dockerhub = credentials('dockerhub')
+    }
     stages {
         stage('Checkout') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/hozodo/jenkins-py-be.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [],
+                userRemoteConfigs: [[url: 'https://github.com/hozodo/jenkins-py-be.git']]])
             }
         }
         stage('Install') {
@@ -36,7 +33,8 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                sh 'docker login -u stacktalks -p S@igon12!@'
+                // sh 'echo $dockerhub_PSW | docker login -u dockerhub_USR -p S@igon12!@'
+                sh 'echo $dockerhub_PSW | docker login -u dockerhub_USR --password-stdin'
                 sh 'docker tag python-jenkins:latest stacktalks/python-jenkins:latest'
                 sh 'docker push stacktalks/python-jenkins:latest'
             }
