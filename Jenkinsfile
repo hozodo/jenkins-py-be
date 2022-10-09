@@ -9,17 +9,17 @@ pipeline {
         }
          stage('Install') {
             steps {
-                bat 'pip install -r requirements.txt'
+                bat 'pip3 install -r requirements.txt'
             }
         }
          stage('Test') {
             steps {
-                bat 'python -m pytest'
+                bat 'python3 -m pytest'
             }
         }
         stage('Build') {
             steps {
-                bat 'python app.py'
+                bat 'python3 app.py'
             }
         }
         stage('Build Docker Image') {
