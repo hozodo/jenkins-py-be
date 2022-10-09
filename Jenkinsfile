@@ -1,11 +1,11 @@
 pipeline {
-    // agent any
-    agent {
-        docker {
-            image 'python:3'
-            label 'my-build-agent'
-        }
-    }
+    agent any
+    // agent {
+    //     docker {
+    //         image 'python:3'
+    //         label 'my-build-agent'
+    //     }
+    // }
 
     stages {
         stage('Checkout') {
