@@ -33,7 +33,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                sh 'docker build --tag python-jenkins .'
+                sh 'docker build --tag python-jenkins:v0.${env.BUILD_ID} .'
             }
         }
 
@@ -41,7 +41,7 @@ pipeline {
             steps {
                 sh 'echo $dockerhub_PSW | docker login -u $dockerhub_USR --password-stdin'
                 sh 'docker tag python-jenkins:latest stacktalks/python-jenkins:latest'
-                sh 'docker push stacktalks/python-jenkins:latest'
+                sh 'docker push stacktalks/python-jenkins:${env.BUILD_ID}'
             }
         }
     }
