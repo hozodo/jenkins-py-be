@@ -44,18 +44,43 @@ pipeline {
                 sh 'docker push --all-tags stacktalks/python-jenkins'
             }
         }
-        // stage('Deploy K8s') {
+        // Minikube deployment using Kubeconfig
+        stage('Deploy K8s') {
+            steps {
+                script {
+                    kubernetesDeploy(configs: 'k8s-deploy.yaml', kubeconfigId: 'KUBE_CONFIG_ID')
+                }
+            }
+        }
+
+        // // The cluster outside Jenkins
+        // stage('SSH to K8s Cluster') {
         //     steps {
-        //         script {
-        //             kubernetesDeploy(configs: 'k8s-deploy.yaml', kubeconfigId: 'KUBE_CONFIG_ID')
+        //         def remote = [:]
+        //         remote.name = 'root'
+        //         remote.host = 'localhost'
+        //         remote.user = 'root'
+        //         remote.password = 'xx'
+        //         remote.allowAnyHosts = true
+        //     }
+        //     stage('Put the file') {
+        //         steps {
+        //             sshPut remote:remote, from:'k8s-deploy.yaml', into = '.'
+        //         }
+        //     }
+
+        //     stage('Deploy') {
+        //         steps {
+        //             sshCommand remote:remote, command:'kubectl apply -f k8s-deploy.yaml'
         //         }
         //     }
         // }
 
-        stage('Deploy K8s using Ansible') {
-            steps {
-                sh 'ansible-playbook ansible-deploy.yaml'
-            }
-        }
+        // // Deploy using Ansible Playbook
+        // stage('Deploy K8s using Ansible') {
+        //     steps {
+        //         sh 'ansible-playbook ansible-deploy.yaml'
+        //     }
+        // }
     }
 }
