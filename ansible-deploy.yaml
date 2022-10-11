@@ -1,0 +1,81 @@
+---
+- name: python minikube
+  hosts: localhost
+  gather_facts: False
+
+  vars:
+
+    ansible_python_interpreter: '{{ ansible_playbook_python }}'
+    image_name: stacktalks/python-jenkins
+    image_tag: v.0.5
+    replicas: 4
+
+  pre_tasks:
+
+    - name: check the status of minikube.
+      command: minikube status
+      register: minikube_status
+      changed_when: false
+      ignore_errors: true
+
+    - name: start minikube if it's not running.
+      command: minikube start --vm = true
+      when: "not minikube_status.stdout or 'Running' not in minikube_status.stdout"
+
+  tasks:
+
+    - name: get existing image hash.
+      shell: |
+        eval $(minikube docker-env)
+        docker images -q {{ image_name }}
+      register: image_hash
+      changed_when: false
+
+    - name: build image if it's not already built. 
+      shell: | 
+        eval $(minikube docker-env)
+        docker build -t {{ image_name }}:{{ image_tag }} .
+      when: not image_hash.stdout
+
+    - name: create a deployment for Hello Python.
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: ansible-deploy
+            namespace: default
+          spec:
+            replicas: "{{ replicas }}"
+            selector:
+              matchLabels:
+                app: ansible-deploy
+            template:
+              metadata:
+                labels:
+                  app: ansible-deploy
+              spec:
+                containers:
+                - name: ansible-deploy
+                  image: "{{ image_name }}:{{ image_tag }}"
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                  - containerPort: 8181
+
+    - name: create a Service for Hello Python.
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: ansible-deploy
+            namespace: default
+          spec:
+            type: NodePort
+            ports:
+            - port: 5000
+              targetPort: 5000
+            selector:
+              app: ansible-deploy
