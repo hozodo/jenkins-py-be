@@ -41,7 +41,14 @@ pipeline {
             steps {
                 sh 'echo $dockerhub_PSW | docker login -u $dockerhub_USR --password-stdin'
                 sh "docker tag python-jenkins:latest stacktalks/python-jenkins:v0.${env.BUILD_ID}"
-                sh "docker push stacktalks/python-jenkins:v0.${env.BUILD_ID}"
+                sh "docker push --all-tags stacktalks/python-jenkins"
+            }
+        }
+        stage('Deploy K8s') {
+            steps {
+                script {
+                    kubernetesDeploy(configs: 'k8s-deploy.yaml', kubeconfigId: 'KUBE_CONFIG_ID')
+                }
             }
         }
     }

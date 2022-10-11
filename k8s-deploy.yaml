@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: docker-k8s
+  name: docker-k8s
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: docker-k8s
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: docker-k8s
+    spec:
+      containers:
+      - image: stacktalks/python-jenkins:latest
+        imagePullPolicy: IfNotPresent
+        name: docker-k8s
+        resources: {}
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: docker-k8s
+  name: docker-k8s
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: docker-k8s
+  type: NodePort
+status:
+  loadBalancer: {}
