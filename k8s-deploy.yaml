@@ -18,7 +18,7 @@ spec:
         app: docker-k8s
     spec:
       containers:
-      - image: stacktalks/python-jenkins:latest
+      - image: stacktalks/python-jenkins:v0.5
         imagePullPolicy: IfNotPresent
         name: docker-k8s
         resources: {}
